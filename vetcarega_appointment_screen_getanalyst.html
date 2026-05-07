@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VetCareGA — Запись питомца к ветеринару</title>
+  <style>
+    :root {
+      --bg: #f5fbfb;
+      --card: #ffffff;
+      --text: #183b3f;
+      --muted: #5f7b7f;
+      --accent: #1fc7c1;
+      --accent-dark: #149b97;
+      --accent-soft: #dff8f7;
+      --border: #d9ecec;
+      --shadow: 0 10px 30px rgba(20, 70, 74, 0.08);
+      --radius: 20px;
+      --slot-hover: #eefafa;
+      --slot-selected: #dff8f7;
+      --slot-selected-border: #1fc7c1;
+      --overlay: rgba(16, 42, 45, 0.45);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, #e8fbfb 0, transparent 30%),
+        radial-gradient(circle at top right, #eefdf9 0, transparent 25%),
+        var(--bg);
+    }
+
+    button,
+    select,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .shell {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) 360px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .main-card {
+      padding: 28px;
+    }
+
+    .side-col {
+      display: grid;
+      gap: 20px;
+      position: sticky;
+      top: 24px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .title-wrap h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.1;
+    }
+
+    .badge {
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      border: 1px solid #c9efed;
+    }
+
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .section:last-child {
+      margin-bottom: 0;
+    }
+
+    .section h2 {
+      margin: 0 0 14px;
+      font-size: 21px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .section-head h2 {
+      margin: 0;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    select,
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 15px;
+      outline: none;
+      color: var(--text);
+      background: #fff;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 96px;
+    }
+
+    select:focus,
+    input:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(31, 199, 193, 0.12);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      padding: 11px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .chip:hover {
+      background: var(--slot-hover);
+      border-color: #bfe9e7;
+    }
+
+    .chip.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent-dark);
+      font-weight: 700;
+    }
+
+    .pet-list,
+    .doctor-list,
+    .time-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .time-list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .pet-item,
+    .doctor-item,
+    .time-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: #fff;
+      cursor: pointer;
+      transition: 0.2s ease;
+      color: inherit;
+      text-align: left;
+    }
+
+    .pet-item:hover,
+    .doctor-item:hover,
+    .time-item:hover {
+      background: var(--slot-hover);
+      border-color: #bfe9e7;
+      transform: translateY(-1px);
+    }
+
+    .pet-item.active,
+    .doctor-item.active,
+    .time-item.active {
+      border-color: var(--slot-selected-border);
+      background: var(--slot-selected);
+      box-shadow: inset 0 0 0 1px rgba(31, 199, 193, 0.18);
+    }
+
+    .entity-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: #eaf7f6;
+      color: var(--accent-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .entity-text {
+      min-width: 0;
+    }
+
+    .entity-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .entity-sub {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #b8d8d8;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 5px rgba(184, 216, 216, 0.18);
+    }
+
+    .active .dot {
+      background: var(--accent);
+      box-shadow: 0 0 0 5px rgba(31, 199, 193, 0.18);
+    }
+
+    .summary-card {
+      padding: 22px;
+    }
+
+    .summary-card h3 {
+      margin: 0 0 16px;
+      font-size: 20px;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 14px;
+    }
+
+    .summary-label {
+      color: var(--muted);
+    }
+
+    .summary-value {
+      text-align: right;
+      font-weight: 700;
+    }
+
+    .price-box {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 16px;
+      background: var(--accent-soft);
+      border: 1px solid #ccefed;
+    }
+
+    .price-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .price-total {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent-dark);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease, background 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 8px 18px rgba(31, 199, 193, 0.25);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-dark);
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: #f7fbfb;
+    }
+
+    .topbar-mobile {
+      display: none;
+      margin-bottom: 16px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: var(--overlay);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .modal.is-open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 560px;
+      padding: 24px;
+      position: relative;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 1100px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .side-col {
+        position: static;
+      }
+    }
+
+    @media (max-width: 780px) {
+      .page {
+        padding: 14px;
+      }
+
+      .main-card,
+      .summary-card,
+      .modal-card {
+        padding: 18px;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .title-wrap h1 {
+        font-size: 28px;
+      }
+
+      .grid-2,
+      .time-list {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        flex-direction: column-reverse;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .summary-row {
+        flex-direction: column;
+      }
+
+      .summary-value {
+        text-align: left;
+      }
+
+      .topbar-mobile {
+        display: block;
+      }
+
+      .modal-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="shell">
+      <main class="card main-card">
+        <div class="topbar-mobile">VetCareGA</div>
+
+        <div class="header">
+          <div class="title-wrap">
+            <h1>Запись к ветеринару</h1>
+          </div>
+          <div class="badge">Шаг 2 из 4</div>
+        </div>
+
+        <section class="section">
+          <div class="section-head">
+            <h2>Питомец</h2>
+            <button type="button" class="btn btn-secondary" id="openPetModalBtn">+ Новый питомец</button>
+          </div>
+          <div class="pet-list" id="petList">
+            <button type="button" class="pet-item active" data-pet-name="Барсик" data-pet-type="Кот · 4 года · Британская короткошёрстная" data-pet-icon="🐈" aria-pressed="true">
+              <div class="entity-main">
+                <div class="avatar">🐈</div>
+                <div class="entity-text">
+                  <div class="entity-title">Барсик</div>
+                  <div class="entity-sub">Кот · 4 года · Британская короткошёрстная</div>
+                </div>
+              </div>
+              <div class="dot"></div>
+            </button>
+            <button type="button" class="pet-item" data-pet-name="Ричи" data-pet-type="Собака · 7 лет · Корги" data-pet-icon="🐕" aria-pressed="false">
+              <div class="entity-main">
+                <div class="avatar">🐕</div>
+                <div class="entity-text">
+                  <div class="entity-title">Ричи</div>
+                  <div class="entity-sub">Собака · 7 лет · Корги</div>
+                </div>
+              </div>
+              <div class="dot"></div>
+            </button>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Клиника и услуга</h2>
+          <div class="grid-2">
+            <div>
+              <label for="clinic">Клиника</label>
+              <select id="clinic">
+                <option value="center">ВетКеа Центр · Маркет-стрит</option>
+                <option value="north">ВетКеа Север · Эль-Камино-Реал</option>
+                <option value="downtown">ВетКеа Даунтаун · 5-я авеню</option>
+              </select>
+            </div>
+            <div>
+              <label for="service">Услуга</label>
+              <select id="service">
+                <option value="consultation">Первичный приём терапевта</option>
+                <option value="repeat">Повторный приём</option>
+                <option value="nutrition">Консультация по питанию</option>
+                <option value="labreview">Просмотр результатов анализов</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Врач</h2>
+          <div class="doctor-list" id="doctorList">
+            <button type="button" class="doctor-item active" data-doctor-name="Анна Петрова" aria-pressed="true">
+              <div class="entity-main">
+                <div class="avatar">👩‍⚕️</div>
+                <div class="entity-text">
+                  <div class="entity-title">Анна Петрова</div>
+                  <div class="entity-sub">Терапевт · 9 лет опыта · Рейтинг 4.9</div>
+                </div>
+              </div>
+              <div class="dot"></div>
+            </button>
+            <button type="button" class="doctor-item" data-doctor-name="Михаил Грин" aria-pressed="false">
+              <div class="entity-main">
+                <div class="avatar">👨‍⚕️</div>
+                <div class="entity-text">
+                  <div class="entity-title">Михаил Грин</div>
+                  <div class="entity-sub">Терапевт · 12 лет опыта · Рейтинг 4.8</div>
+                </div>
+              </div>
+              <div class="dot"></div>
+            </button>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Дата и время</h2>
+          <div class="grid-2">
+            <div>
+              <label for="date">Дата приёма</label>
+              <input id="date" type="date" value="2026-05-10" />
+            </div>
+            <div>
+              <label for="format">Формат</label>
+              <select id="format">
+                <option value="offline">Очно в клинике</option>
+                <option value="online">Онлайн-консультация</option>
+              </select>
+            </div>
+          </div>
+          <div style="height: 16px"></div>
+          <div class="time-list" id="timeList">
+            <button type="button" class="time-item" data-time="10:00" aria-pressed="false"><div class="entity-title">10:00</div><div class="dot"></div></button>
+            <button type="button" class="time-item" data-time="11:30" aria-pressed="false"><div class="entity-title">11:30</div><div class="dot"></div></button>
+            <button type="button" class="time-item active" data-time="14:00" aria-pressed="true"><div class="entity-title">14:00</div><div class="dot"></div></button>
+            <button type="button" class="time-item" data-time="15:30" aria-pressed="false"><div class="entity-title">15:30</div><div class="dot"></div></button>
+            <button type="button" class="time-item" data-time="17:00" aria-pressed="false"><div class="entity-title">17:00</div><div class="dot"></div></button>
+            <button type="button" class="time-item" data-time="18:30" aria-pressed="false"><div class="entity-title">18:30</div><div class="dot"></div></button>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Комментарий</h2>
+          <div class="chips" id="symptomsChips" style="margin-bottom: 14px;">
+            <button class="chip active" type="button">Кашель</button>
+            <button class="chip" type="button">Потеря аппетита</button>
+            <button class="chip" type="button">Рвота</button>
+            <button class="chip" type="button">Сыпь</button>
+            <button class="chip" type="button">Плановый осмотр</button>
+          </div>
+          <label class="sr-only" for="comment">Комментарий</label>
+          <textarea id="comment" placeholder="Опишите симптомы или цель визита">Кашель 3 дня, стал меньше есть, температура не измерялась.</textarea>
+        </section>
+
+        <div class="actions">
+          <a href="#" class="btn btn-secondary">Назад</a>
+          <a href="#" class="btn btn-primary">Далее</a>
+        </div>
+      </main>
+
+      <aside class="side-col">
+        <section class="card summary-card">
+          <h3>Сводка</h3>
+          <div class="summary-list">
+            <div class="summary-row">
+              <div class="summary-label">Питомец</div>
+              <div class="summary-value" id="summaryPet">Барсик</div>
+            </div>
+            <div class="summary-row">
+              <div class="summary-label">Клиника</div>
+              <div class="summary-value" id="summaryClinic">ВетКеа Центр</div>
+            </div>
+            <div class="summary-row">
+              <div class="summary-label">Врач</div>
+              <div class="summary-value" id="summaryDoctor">Анна Петрова</div>
+            </div>
+            <div class="summary-row">
+              <div class="summary-label">Услуга</div>
+              <div class="summary-value" id="summaryService">Первичный приём терапевта</div>
+            </div>
+            <div class="summary-row">
+              <div class="summary-label">Дата и время</div>
+              <div class="summary-value" id="summaryDateTime">10 мая 2026 · 14:00</div>
+            </div>
+            <div class="summary-row">
+              <div class="summary-label">Формат</div>
+              <div class="summary-value" id="summaryFormat">Очно в клинике</div>
+            </div>
+          </div>
+
+          <div class="price-box">
+            <div class="price-top">
+              <span>Стоимость услуги</span>
+              <strong id="summaryPrice">3 500 ₽</strong>
+            </div>
+            <div class="price-top">
+              <span>Предоплата</span>
+              <strong id="summaryPrepayment">1 050 ₽</strong>
+            </div>
+            <div class="price-total" id="summaryTotal">1 050 ₽</div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <div id="petModal" class="modal" aria-hidden="true">
+    <div class="card modal-card" role="dialog" aria-modal="true" aria-labelledby="petModalTitle">
+      <div class="modal-head">
+        <h3 id="petModalTitle">Новый питомец</h3>
+        <button type="button" id="closePetModalBtn" class="btn btn-secondary" style="padding:8px 12px; width:auto;">Закрыть</button>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <label for="newPetName">Кличка</label>
+          <input id="newPetName" type="text" placeholder="Например, Молли" />
+        </div>
+        <div>
+          <label for="newPetType">Вид</label>
+          <select id="newPetType">
+            <option value="cat">Кошка</option>
+            <option value="dog">Собака</option>
+            <option value="rabbit">Кролик</option>
+            <option value="other">Другое</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="height:16px;"></div>
+
+      <div class="grid-2">
+        <div>
+          <label for="newPetAge">Возраст</label>
+          <input id="newPetAge" type="number" min="0" max="40" placeholder="Например, 2" />
+        </div>
+        <div>
+          <label for="newPetBreed">Порода</label>
+          <input id="newPetBreed" type="text" placeholder="Например, Мейн-кун" />
+        </div>
+      </div>
+
+      <div style="height:22px;"></div>
+
+      <div style="display:flex; justify-content:flex-end; gap:12px; flex-wrap:wrap;">
+        <button type="button" id="cancelPetModalBtn" class="btn btn-secondary">Отмена</button>
+        <button type="button" id="savePetBtn" class="btn btn-primary">Сохранить питомца</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      clinicNames: {
+        center: 'ВетКеа Центр',
+        north: 'ВетКеа Север',
+        downtown: 'ВетКеа Даунтаун'
+      },
+      serviceNames: {
+        consultation: 'Первичный приём терапевта',
+        repeat: 'Повторный приём',
+        nutrition: 'Консультация по питанию',
+        labreview: 'Просмотр результатов анализов'
+      },
+      serviceBasePrices: {
+        consultation: 3500,
+        repeat: 2500,
+        nutrition: 4200,
+        labreview: 1800
+      },
+      clinicMultipliers: {
+        center: 1,
+        north: 0.95,
+        downtown: 1.1
+      },
+      doctorMultipliers: {
+        'Анна Петрова': 1,
+        'Михаил Грин': 1.12
+      },
+      formatMultipliers: {
+        offline: 1,
+        online: 0.9
+      },
+      petTypeMap: {
+        cat: { label: 'Кошка', icon: '🐈' },
+        dog: { label: 'Собака', icon: '🐕' },
+        rabbit: { label: 'Кролик', icon: '🐇' },
+        other: { label: 'Питомец', icon: '🐾' }
+      },
+      prepaymentRate: 0.3
+    };
+
+    const elements = {
+      clinic: document.getElementById('clinic'),
+      service: document.getElementById('service'),
+      format: document.getElementById('format'),
+      date: document.getElementById('date'),
+      petList: document.getElementById('petList'),
+      doctorList: document.getElementById('doctorList'),
+      timeList: document.getElementById('timeList'),
+      symptomsChips: document.getElementById('symptomsChips'),
+      summaryPet: document.getElementById('summaryPet'),
+      summaryClinic: document.getElementById('summaryClinic'),
+      summaryDoctor: document.getElementById('summaryDoctor'),
+      summaryService: document.getElementById('summaryService'),
+      summaryDateTime: document.getElementById('summaryDateTime'),
+      summaryFormat: document.getElementById('summaryFormat'),
+      summaryPrice: document.getElementById('summaryPrice'),
+      summaryPrepayment: document.getElementById('summaryPrepayment'),
+      summaryTotal: document.getElementById('summaryTotal'),
+      petModal: document.getElementById('petModal'),
+      openPetModalBtn: document.getElementById('openPetModalBtn'),
+      closePetModalBtn: document.getElementById('closePetModalBtn'),
+      cancelPetModalBtn: document.getElementById('cancelPetModalBtn'),
+      savePetBtn: document.getElementById('savePetBtn'),
+      newPetName: document.getElementById('newPetName'),
+      newPetType: document.getElementById('newPetType'),
+      newPetAge: document.getElementById('newPetAge'),
+      newPetBreed: document.getElementById('newPetBreed')
+    };
+
+    function formatRub(amount) {
+      return new Intl.NumberFormat('ru-RU').format(amount) + ' ₽';
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString + 'T12:00:00');
+      return new Intl.DateTimeFormat('ru-RU', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      }).format(date);
+    }
+
+    function getAgeLabel(age) {
+      const value = Number(age);
+      if (!Number.isFinite(value)) return 'лет';
+      const lastTwo = value % 100;
+      const last = value % 10;
+      if (lastTwo >= 11 && lastTwo <= 14) return 'лет';
+      if (last === 1) return 'год';
+      if (last >= 2 && last <= 4) return 'года';
+      return 'лет';
+    }
+
+    function getActiveItem(container) {
+      return container.querySelector('.active');
+    }
+
+    function setActive(container, item) {
+      container.querySelectorAll('.active').forEach((el) => {
+        el.classList.remove('active');
+        el.setAttribute('aria-pressed', 'false');
+      });
+      item.classList.add('active');
+      item.setAttribute('aria-pressed', 'true');
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const activePet = getActiveItem(elements.petList);
+      const activeDoctor = getActiveItem(elements.doctorList);
+      const activeTime = getActiveItem(elements.timeList);
+
+      const petName = activePet?.dataset.petName || '';
+      const doctorName = activeDoctor?.dataset.doctorName || '';
+      const clinicValue = elements.clinic.value;
+      const serviceValue = elements.service.value;
+      const formatValue = elements.format.value;
+      const timeValue = activeTime?.dataset.time || '';
+
+      elements.summaryPet.textContent = petName;
+      elements.summaryDoctor.textContent = doctorName;
+      elements.summaryClinic.textContent = state.clinicNames[clinicValue];
+      elements.summaryService.textContent = state.serviceNames[serviceValue];
+      elements.summaryFormat.textContent = formatValue === 'online' ? 'Онлайн-консультация' : 'Очно в клинике';
+      elements.summaryDateTime.textContent = `${formatDate(elements.date.value)} · ${timeValue}`;
+
+      const base = state.serviceBasePrices[serviceValue] || 0;
+      const clinicRate = state.clinicMultipliers[clinicValue] || 1;
+      const doctorRate = state.doctorMultipliers[doctorName] || 1;
+      const formatRate = state.formatMultipliers[formatValue] || 1;
+      const fullPrice = Math.round(base * clinicRate * doctorRate * formatRate);
+      const prepayment = Math.round(fullPrice * state.prepaymentRate);
+
+      elements.summaryPrice.textContent = formatRub(fullPrice);
+      elements.summaryPrepayment.textContent = formatRub(prepayment);
+      elements.summaryTotal.textContent = formatRub(prepayment);
+    }
+
+    function bindSelectableButtons(container) {
+      container.querySelectorAll('button').forEach((item) => {
+        item.addEventListener('click', () => setActive(container, item));
+      });
+    }
+
+    function openPetModal() {
+      elements.petModal.classList.add('is-open');
+      elements.petModal.setAttribute('aria-hidden', 'false');
+      elements.newPetName.focus();
+    }
+
+    function closePetModal() {
+      elements.petModal.classList.remove('is-open');
+      elements.petModal.setAttribute('aria-hidden', 'true');
+      elements.newPetName.value = '';
+      elements.newPetType.value = 'cat';
+      elements.newPetAge.value = '';
+      elements.newPetBreed.value = '';
+    }
+
+    function createPetCard(name, typeKey, age, breed) {
+      const typeData = state.petTypeMap[typeKey] || state.petTypeMap.other;
+      const ageLabel = getAgeLabel(age);
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'pet-item';
+      button.dataset.petName = name;
+      button.dataset.petType = `${typeData.label} · ${age} ${ageLabel} · ${breed}`;
+      button.dataset.petIcon = typeData.icon;
+      button.setAttribute('aria-pressed', 'false');
+      button.innerHTML = `
+        <div class="entity-main">
+          <div class="avatar">${typeData.icon}</div>
+          <div class="entity-text">
+            <div class="entity-title">${name}</div>
+            <div class="entity-sub">${typeData.label} · ${age} ${ageLabel} · ${breed}</div>
+          </div>
+        </div>
+        <div class="dot"></div>
+      `;
+      button.addEventListener('click', () => setActive(elements.petList, button));
+      return button;
+    }
+
+    function savePet() {
+      const name = elements.newPetName.value.trim();
+      const typeKey = elements.newPetType.value;
+      const age = elements.newPetAge.value.trim();
+      const breed = elements.newPetBreed.value.trim();
+
+      if (!name || !age || !breed) {
+        alert('Заполните кличку, возраст и породу питомца.');
+        return;
+      }
+
+      const petCard = createPetCard(name, typeKey, age, breed);
+      elements.petList.appendChild(petCard);
+      setActive(elements.petList, petCard);
+      closePetModal();
+    }
+
+    function runSmokeTests() {
+      console.assert(typeof state.clinicNames.center === 'string', 'clinicNames должен быть определён');
+      console.assert(formatRub(3500) === '3 500 ₽' || formatRub(3500) === '3 500 ₽', 'formatRub должен форматировать рубли');
+      console.assert(getAgeLabel(1) === 'год', '1 -> год');
+      console.assert(getAgeLabel(3) === 'года', '3 -> года');
+      console.assert(getAgeLabel(5) === 'лет', '5 -> лет');
+      console.assert(elements.clinic instanceof HTMLElement, 'Элемент clinic должен существовать');
+      console.assert(document.querySelectorAll('script').length === 1, 'В документе должен быть один script');
+    }
+
+    bindSelectableButtons(elements.petList);
+    bindSelectableButtons(elements.doctorList);
+    bindSelectableButtons(elements.timeList);
+
+    elements.symptomsChips.querySelectorAll('.chip').forEach((chip) => {
+      chip.addEventListener('click', () => chip.classList.toggle('active'));
+    });
+
+    [elements.clinic, elements.service, elements.format, elements.date].forEach((el) => {
+      el.addEventListener('change', updateSummary);
+    });
+
+    elements.openPetModalBtn.addEventListener('click', openPetModal);
+    elements.closePetModalBtn.addEventListener('click', closePetModal);
+    elements.cancelPetModalBtn.addEventListener('click', closePetModal);
+    elements.savePetBtn.addEventListener('click', savePet);
+
+    elements.petModal.addEventListener('click', (event) => {
+      if (event.target === elements.petModal) closePetModal();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && elements.petModal.classList.contains('is-open')) {
+        closePetModal();
+      }
+    });
+
+    updateSummary();
+    runSmokeTests();
+  </script>
+</body>
+</html>
