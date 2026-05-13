@@ -1,0 +1,506 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Spectral:wght@400;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#2abf9e;--teal-light:#e8f9f5;--teal-mid:#b2ead9;--teal-dark:#1a8f75;
+  --warn-border:#f5c99a;--past-bg:#f5f5f3;--past-border:#e0e0dc;
+  --text-primary:#1a1a18;--text-secondary:#6b6b65;--text-muted:#9e9e98;
+  --bg:#f0f4f2;--card-bg:#fff;--border:#e8e8e4;--radius:16px;--radius-sm:10px;
+}
+body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column}
+
+/* HEADER */
+.header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.header-inner{max-width:960px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-icon{width:32px;height:32px;background:var(--teal);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.logo-text{font-family:'Spectral',serif;font-size:18px;font-weight:600;color:var(--text-primary)}
+.logo-text span{color:var(--teal-dark)}
+.header-nav{display:flex;align-items:center;gap:4px}
+.nav-link{font-size:13px;font-weight:600;color:var(--text-muted);padding:6px 12px;border-radius:8px;cursor:pointer;text-decoration:none;transition:all .15s;white-space:nowrap}
+.nav-link:hover{background:var(--bg);color:var(--text-primary)}
+.nav-link.active{background:var(--teal-light);color:var(--teal-dark)}
+.header-actions{display:flex;align-items:center;gap:12px}
+.notif-btn{width:36px;height:36px;border-radius:10px;border:1.5px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;position:relative;transition:all .15s}
+.notif-btn:hover{background:var(--bg)}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:#e05c3a;border-radius:50%;border:1.5px solid #fff}
+.avatar{width:36px;height:36px;border-radius:10px;background:var(--teal-light);border:1.5px solid var(--teal-mid);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--teal-dark);cursor:pointer}
+
+/* LAYOUT */
+.main{flex:1;max-width:960px;margin:0 auto;width:100%;padding:32px 24px;display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:start}
+
+/* SIDEBAR */
+.sidebar{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.sidebar-user{padding:20px;border-bottom:1px solid var(--border);text-align:center}
+.sidebar-avatar{width:56px;height:56px;border-radius:14px;background:var(--teal-light);border:2px solid var(--teal-mid);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--teal-dark);margin:0 auto 10px}
+.sidebar-name{font-size:14px;font-weight:700}
+.sidebar-email{font-size:12px;color:var(--text-muted);margin-top:2px}
+.sidebar-nav{padding:8px}
+.sidebar-link{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;font-size:13px;font-weight:600;color:var(--text-secondary);cursor:pointer;transition:all .15s;margin-bottom:2px}
+.sidebar-link:hover{background:var(--bg);color:var(--text-primary)}
+.sidebar-link.active{background:var(--teal-light);color:var(--teal-dark)}
+.sidebar-icon{font-size:15px;width:20px;text-align:center}
+
+/* FILTERS */
+.filters-bar{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:20px}
+.filters-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px}
+.filters-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.filter-group{display:flex;flex-direction:column;gap:4px}
+.filter-label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted)}
+.filter-select,.filter-input{font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;color:var(--text-primary);background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:7px 28px 7px 10px;width:100%;cursor:pointer;transition:border-color .15s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239e9e98' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.filter-input{background-image:none;padding-right:10px;cursor:text}
+.filter-select:focus,.filter-input:focus{outline:none;border-color:var(--teal)}
+.filter-select:hover,.filter-input:hover{border-color:#bbb}
+.filters-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.active-chips{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+.chip{display:flex;align-items:center;gap:5px;background:var(--teal-light);border:1px solid var(--teal-mid);color:var(--teal-dark);font-size:11px;font-weight:600;padding:3px 8px 3px 10px;border-radius:20px}
+.chip-x{cursor:pointer;font-size:14px;line-height:1;opacity:.6}
+.chip-x:hover{opacity:1}
+.btn-reset{font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;padding:6px 14px;border-radius:8px;background:transparent;border:1.5px solid var(--border);color:var(--text-muted);cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-reset:hover{border-color:#bbb;color:var(--text-primary)}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:20px}
+.page-title{font-family:'Spectral',serif;font-size:26px;font-weight:600;letter-spacing:-.5px}
+.page-subtitle{font-size:13px;color:var(--text-muted);margin-top:3px}
+
+/* SECTION */
+.section{margin-bottom:24px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-muted)}
+.toggle-past-btn{font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;padding:5px 12px;border-radius:8px;background:transparent;border:1.5px solid var(--border);color:var(--text-muted);cursor:pointer;transition:all .15s}
+.toggle-past-btn:hover{border-color:#bbb;color:var(--text-primary)}
+.toggle-past-btn.active{background:var(--past-border);border-color:var(--past-border);color:var(--text-secondary)}
+
+/* CARDS */
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:10px;transition:box-shadow .18s}
+.card:last-child{margin-bottom:0}
+.card:hover{box-shadow:0 4px 18px rgba(0,0,0,.06)}
+.card.past{background:var(--past-bg);border-color:var(--past-border);opacity:.82}
+.card.upcoming{border-left:3px solid var(--teal)}
+.card.first-upcoming{border-left:3px solid var(--warn-border)}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;gap:12px}
+.date-main{font-size:15px;font-weight:700}
+.date-time{font-size:12px;color:var(--text-muted);margin-top:2px}
+.status-badge{font-size:11px;font-weight:700;letter-spacing:.4px;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.badge-past{background:var(--past-border);color:var(--text-secondary)}
+.badge-soon{background:#fef3e2;color:#c4702a}
+.badge-upcoming{background:var(--teal-light);color:var(--teal-dark)}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;margin-bottom:14px}
+.info-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.7px;font-weight:700;margin-bottom:1px}
+.info-value{font-size:13px;font-weight:500}
+.info-value.muted{color:var(--text-secondary);font-weight:400}
+.pet-row{display:flex;align-items:center;gap:9px;padding:9px 12px;background:var(--teal-light);border-radius:var(--radius-sm);margin-bottom:12px}
+.card.past .pet-row{background:#ececea}
+.pet-icon{font-size:20px;line-height:1}
+.pet-name{font-size:13px;font-weight:700}
+.pet-details{font-size:11px;color:var(--text-secondary);margin-top:1px}
+.cancel-warning{font-size:12px;color:var(--text-muted);background:#f5f5f3;border:1px solid var(--past-border);border-radius:8px;padding:7px 11px;margin-bottom:11px;line-height:1.5}
+.price-row{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--border);gap:12px;flex-wrap:wrap}
+.price-main{font-size:16px;font-weight:700;color:var(--teal-dark)}
+.price-sub{font-size:11px;color:var(--text-muted);margin-top:1px}
+.card.past .price-main{color:var(--text-secondary)}
+.actions{display:flex;gap:7px;flex-wrap:wrap}
+.btn{font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;padding:7px 14px;border-radius:8px;border:none;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text-secondary)}
+.btn-outline:hover{border-color:#bbb;color:var(--text-primary)}
+.btn-cancel{background:transparent;border:1.5px solid #f5c3c3;color:#c0392b}
+.btn-cancel:hover{background:#fff0f0}
+.btn-reschedule{background:var(--teal-light);border:1.5px solid var(--teal-mid);color:var(--teal-dark)}
+.btn-reschedule:hover{background:#d0f0e8}
+
+/* SHOW MORE */
+.show-more-btn{width:100%;background:transparent;border:1.5px dashed var(--past-border);border-radius:var(--radius-sm);color:var(--text-muted);font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;padding:11px;cursor:pointer;margin-top:4px;transition:all .15s}
+.show-more-btn:hover{border-color:#bbb;color:var(--text-secondary);background:#f5f5f3}
+
+/* EMPTY */
+.empty{text-align:center;padding:36px 20px;color:var(--text-muted);font-size:14px}
+.empty-icon{font-size:34px;margin-bottom:10px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:var(--radius);padding:28px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.15);transform:translateY(8px);transition:transform .2s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-icon{font-size:36px;margin-bottom:12px}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:8px;color:var(--text-primary)}
+.modal-body{font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:20px}
+.modal-warn{background:#fff8f0;border:1px solid var(--warn-border);border-radius:8px;padding:10px 14px;font-size:13px;color:#c4702a;margin-bottom:20px;line-height:1.5}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end}
+.btn-modal-cancel{font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;padding:9px 18px;border-radius:9px;background:transparent;border:1.5px solid var(--border);color:var(--text-secondary);cursor:pointer;transition:all .15s}
+.btn-modal-cancel:hover{border-color:#bbb;color:var(--text-primary)}
+.btn-modal-confirm{font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;padding:9px 18px;border-radius:9px;background:#e74c3c;border:none;color:#fff;cursor:pointer;transition:all .15s}
+.btn-modal-confirm:hover{background:#c0392b}
+
+/* FADE IN */
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .25s ease}
+
+/* FOOTER */
+.footer{background:#fff;border-top:1px solid var(--border);padding:20px 24px;margin-top:auto}
+.footer-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.footer-logo{font-family:'Spectral',serif;font-size:15px;font-weight:600;color:var(--text-secondary)}
+.footer-logo span{color:var(--teal-dark)}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap}
+.footer-link{font-size:12px;color:var(--text-muted);cursor:pointer;text-decoration:none;transition:color .15s}
+.footer-link:hover{color:var(--text-primary)}
+.footer-copy{font-size:12px;color:var(--text-muted)}
+</style>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" href="#"><div class="logo-icon">🐾</div><div class="logo-text">Vet<span>Care</span></div></a>
+    <nav class="header-nav">
+      <a class="nav-link" href="#">Главная</a>
+      <a class="nav-link active" href="#">Мои записи</a>
+      <a class="nav-link" href="#">Питомцы</a>
+      <a class="nav-link" href="#">Клиники</a>
+      <a class="nav-link" href="#">Врачи</a>
+    </nav>
+    <div class="header-actions">
+      <button class="notif-btn">🔔<span class="notif-dot"></span></button>
+      <div class="avatar">АК</div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="main">
+  <aside class="sidebar">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">АК</div>
+      <div class="sidebar-name">Анастасия К.</div>
+      <div class="sidebar-email">a.k@example.com</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-link"><span class="sidebar-icon">🏠</span> Главная</div>
+      <div class="sidebar-link active"><span class="sidebar-icon">📅</span> Мои записи</div>
+      <div class="sidebar-link"><span class="sidebar-icon">🐾</span> Питомцы</div>
+      <div class="sidebar-link"><span class="sidebar-icon">📋</span> Медкарты</div>
+      <div class="sidebar-link"><span class="sidebar-icon">💳</span> Оплата</div>
+      <div class="sidebar-link"><span class="sidebar-icon">⚙️</span> Настройки</div>
+    </nav>
+  </aside>
+
+  <div class="content">
+    <div class="page-header">
+      <div class="page-title">Мои записи</div>
+      <div class="page-subtitle">Записи к ветеринару для ваших питомцев</div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters-bar">
+      <div class="filters-title">Фильтры</div>
+      <div class="filters-grid">
+        <div class="filter-group">
+          <div class="filter-label">Дата с</div>
+          <input class="filter-input" type="date" id="f-from">
+        </div>
+        <div class="filter-group">
+          <div class="filter-label">Дата по</div>
+          <input class="filter-input" type="date" id="f-to">
+        </div>
+        <div class="filter-group">
+          <div class="filter-label">Питомец</div>
+          <select class="filter-select" id="f-pet">
+            <option value="">Все питомцы</option>
+            <option value="Барсик">🐱 Барсик</option>
+            <option value="Ричи">🐶 Ричи</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <div class="filter-label">Клиника</div>
+          <select class="filter-select" id="f-clinic">
+            <option value="">Все клиники</option>
+            <option value="Маркет-стрит">ВетКеа · Маркет-стрит</option>
+            <option value="Северный">ВетКеа · Северный</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <div class="filter-label">Врач</div>
+          <select class="filter-select" id="f-doctor">
+            <option value="">Все врачи</option>
+            <option value="Анна Петрова">Анна Петрова</option>
+            <option value="Михаил Грин">Михаил Грин</option>
+          </select>
+        </div>
+      </div>
+      <div class="filters-footer">
+        <div class="active-chips" id="chips"></div>
+        <button class="btn-reset" onclick="resetAll()">Сбросить всё</button>
+      </div>
+    </div>
+
+    <!-- PAST SECTION -->
+    <div class="section" id="sec-past">
+      <div class="section-header">
+        <div class="section-label">Прошедшие</div>
+        <button class="toggle-past-btn" id="toggle-past-btn" onclick="togglePast()">Скрыть прошедшие</button>
+      </div>
+      <div id="past-list"></div>
+      <button class="show-more-btn" id="show-more-btn" style="display:none" onclick="showMore()"></button>
+      <div class="empty" id="past-empty" style="display:none"><div class="empty-icon">📭</div>Прошедших записей по фильтрам нет</div>
+    </div>
+
+    <!-- UPCOMING SECTION -->
+    <div class="section" id="sec-upcoming">
+      <div class="section-header"><div class="section-label">Предстоящие</div></div>
+      <div id="upcoming-list"></div>
+      <div class="empty" id="upcoming-empty" style="display:none"><div class="empty-icon">🗓️</div>Предстоящих записей по фильтрам нет</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-logo">Vet<span>Care</span></div>
+    <div class="footer-links">
+      <a class="footer-link" href="#">О сервисе</a>
+      <a class="footer-link" href="#">Помощь</a>
+      <a class="footer-link" href="#">Политика конфиденциальности</a>
+      <a class="footer-link" href="#">Условия использования</a>
+      <a class="footer-link" href="#">Контакты</a>
+    </div>
+    <div class="footer-copy">© 2026 VetCare</div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-icon" id="modal-icon"></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-warn" id="modal-warn" style="display:none"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeModalDirect()">Не отменять</button>
+      <button class="btn-modal-confirm" id="modal-confirm-btn" onclick="confirmCancel()">Отменить запись</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PAST = [
+  {id:'p0',pet:'Барсик',petIcon:'🐱',petDetails:'Кот · Британская короткошёрстная · 6 лет (15.03.2022)',clinic:'Маркет-стрит',doctor:'Анна Петрова',date:'2026-05-05',dateLabel:'5 мая 2026',timeLabel:'вторник · 11:00',service:'Первичный приём терапевта',format:'Очно в клинике',price:'3 500 ₽',prepay:'1 050 ₽',type:'past'},
+  {id:'p1',pet:'Ричи',petIcon:'🐶',petDetails:'Собака · Корги · 9 лет (02.06.2018)',clinic:'Маркет-стрит',doctor:'Михаил Грин',date:'2026-04-18',dateLabel:'18 апреля 2026',timeLabel:'пятница · 09:30',service:'Плановый осмотр',format:'Очно в клинике',price:'1 800 ₽',prepay:'540 ₽',type:'past'},
+  {id:'p2',pet:'Барсик',petIcon:'🐱',petDetails:'Кот · Британская короткошёрстная · 6 лет (15.03.2022)',clinic:'Северный',doctor:'Анна Петрова',date:'2026-03-02',dateLabel:'2 марта 2026',timeLabel:'понедельник · 15:00',service:'Дерматологический осмотр',format:'Очно в клинике',price:'2 200 ₽',prepay:'660 ₽',type:'past'},
+];
+
+const UPCOMING = [
+  {id:'u0',pet:'Барсик',petIcon:'🐱',petDetails:'Кот · Британская короткошёрстная · 6 лет (15.03.2022)',clinic:'Маркет-стрит',doctor:'Анна Петрова',date:'2028-05-13',dateLabel:'13 мая 2028',timeLabel:'воскресенье · 14:00 · через 2 года',service:'Вакцинация (комплекс)',format:'Очно в клинике',price:'2 800 ₽',prepay:'840 ₽',type:'upcoming',freeCancelExpired:true},
+  {id:'u1',pet:'Ричи',petIcon:'🐶',petDetails:'Собака · Корги · 9 лет (02.06.2018)',clinic:'Маркет-стрит',doctor:'Михаил Грин',date:'2028-06-20',dateLabel:'20 июня 2028',timeLabel:'среда · 10:30',service:'УЗИ брюшной полости',format:'Очно в клинике',price:'4 200 ₽',prepay:'1 260 ₽',type:'upcoming',freeCancelExpired:false},
+  {id:'u2',pet:'Барсик',petIcon:'🐱',petDetails:'Кот · Британская короткошёрстная · 6 лет (15.03.2022)',clinic:'Северный',doctor:'Анна Петрова',date:'2028-08-03',dateLabel:'3 августа 2028',timeLabel:'четверг · 16:00',service:'Чистка зубов',format:'Очно в клинике',price:'5 500 ₽',prepay:'1 650 ₽',type:'upcoming',freeCancelExpired:false},
+];
+
+let pastHidden = false;
+let pastExpanded = false;
+let cancelTarget = null;
+
+// ── RENDER ──
+function renderCard(a, extraClass) {
+  const isPast = a.type === 'past';
+  const isFirst = a.id === 'u0';
+  const borderClass = isPast ? 'past' : (isFirst ? 'upcoming first-upcoming' : 'upcoming');
+  const badge = isPast
+    ? '<div class="status-badge badge-past">Завершён</div>'
+    : (isFirst
+        ? '<div class="status-badge badge-soon">Скоро</div>'
+        : '<div class="status-badge badge-upcoming">Запланировано</div>');
+
+  const warn = (!isPast && a.freeCancelExpired)
+    ? `<div class="cancel-warning">⚠️ Бесплатная отмена недоступна — до приёма менее 24 часов. При отмене предоплата не возвращается.</div>`
+    : '';
+
+  const btns = isPast
+    ? `<button class="btn btn-outline">Повторить запись</button>`
+    : `<button class="btn btn-reschedule">Перенести</button>
+       <button class="btn btn-cancel" onclick="openModal('${a.id}')">Отменить</button>`;
+
+  return `
+<div class="card ${borderClass} ${extraClass||''}" id="card-${a.id}"
+  data-pet="${a.pet}" data-clinic="${a.clinic}" data-doctor="${a.doctor}" data-date="${a.date}">
+  <div class="card-top">
+    <div><div class="date-main">${a.dateLabel}</div><div class="date-time">${a.timeLabel}</div></div>
+    ${badge}
+  </div>
+  <div class="pet-row">
+    <div class="pet-icon">${a.petIcon}</div>
+    <div><div class="pet-name">${a.pet}</div><div class="pet-details">${a.petDetails}</div></div>
+  </div>
+  ${warn}
+  <div class="info-grid">
+    <div><div class="info-label">Услуга</div><div class="info-value">${a.service}</div></div>
+    <div><div class="info-label">Врач</div><div class="info-value">${a.doctor}</div></div>
+    <div><div class="info-label">Клиника</div><div class="info-value muted">ВетКеа Центр · ${a.clinic}</div></div>
+    <div><div class="info-label">Формат</div><div class="info-value muted">${a.format}</div></div>
+  </div>
+  <div class="price-row">
+    <div><div class="price-main">${a.price}</div><div class="price-sub">Предоплата ${a.prepay}</div></div>
+    <div class="actions">${btns}</div>
+  </div>
+</div>`;
+}
+
+function getFilters() {
+  return {
+    from:   document.getElementById('f-from').value,
+    to:     document.getElementById('f-to').value,
+    pet:    document.getElementById('f-pet').value,
+    clinic: document.getElementById('f-clinic').value,
+    doctor: document.getElementById('f-doctor').value,
+  };
+}
+
+function match(a, f) {
+  if (f.pet    && a.pet    !== f.pet)    return false;
+  if (f.clinic && a.clinic !== f.clinic) return false;
+  if (f.doctor && a.doctor !== f.doctor) return false;
+  if (f.from   && a.date   <  f.from)   return false;
+  if (f.to     && a.date   >  f.to)     return false;
+  return true;
+}
+
+function render() {
+  const f = getFilters();
+
+  // ── PAST ──
+  const pastMatched = PAST.filter(a => match(a, f));
+  const pastList = document.getElementById('past-list');
+  const secPast = document.getElementById('sec-past');
+  const showMoreBtn = document.getElementById('show-more-btn');
+  const pastEmpty = document.getElementById('past-empty');
+
+  if (pastHidden) {
+    secPast.style.display = 'none';
+  } else {
+    secPast.style.display = '';
+    if (pastMatched.length === 0) {
+      pastList.innerHTML = '';
+      showMoreBtn.style.display = 'none';
+      pastEmpty.style.display = '';
+    } else {
+      pastEmpty.style.display = 'none';
+      const visible = pastExpanded ? pastMatched : pastMatched.slice(0, 1);
+      const hidden  = pastExpanded ? [] : pastMatched.slice(1);
+      pastList.innerHTML = visible.map(a => renderCard(a, '')).join('');
+      if (hidden.length > 0) {
+        showMoreBtn.style.display = '';
+        showMoreBtn.textContent = `+ Показать ещё прошедшие записи (${hidden.length})`;
+      } else {
+        showMoreBtn.style.display = 'none';
+      }
+    }
+  }
+
+  // ── UPCOMING ──
+  const upMatched = UPCOMING.filter(a => match(a, f));
+  const upList = document.getElementById('upcoming-list');
+  const upEmpty = document.getElementById('upcoming-empty');
+  if (upMatched.length === 0) {
+    upList.innerHTML = '';
+    upEmpty.style.display = '';
+  } else {
+    upEmpty.style.display = 'none';
+    upList.innerHTML = upMatched.map(a => renderCard(a, '')).join('');
+  }
+
+  renderChips(f);
+}
+
+function showMore() {
+  pastExpanded = true;
+  const f = getFilters();
+  const pastMatched = PAST.filter(a => match(a, f));
+  const pastList = document.getElementById('past-list');
+  pastList.innerHTML = pastMatched.map(a => renderCard(a, 'fade-in')).join('');
+  document.getElementById('show-more-btn').style.display = 'none';
+}
+
+function togglePast() {
+  pastHidden = !pastHidden;
+  pastExpanded = false;
+  const btn = document.getElementById('toggle-past-btn');
+  btn.textContent = pastHidden ? 'Показать прошедшие' : 'Скрыть прошедшие';
+  btn.classList.toggle('active', pastHidden);
+  render();
+}
+
+function resetAll() {
+  ['f-from','f-to','f-pet','f-clinic','f-doctor'].forEach(id => document.getElementById(id).value = '');
+  pastExpanded = false;
+  render();
+}
+
+// ── CHIPS ──
+const CHIP_META = {
+  from:   {label:'С',     id:'f-from'},
+  to:     {label:'По',    id:'f-to'},
+  pet:    {label:'Питомец', id:'f-pet'},
+  clinic: {label:'Клиника', id:'f-clinic'},
+  doctor: {label:'Врач',    id:'f-doctor'},
+};
+function renderChips(f) {
+  const bar = document.getElementById('chips');
+  bar.innerHTML = Object.entries(f).filter(([,v])=>v).map(([k,v])=>`
+    <div class="chip">${CHIP_META[k].label}: ${v}
+      <span class="chip-x" onclick="clearChip('${k}')">×</span>
+    </div>`).join('');
+}
+function clearChip(k) {
+  document.getElementById(CHIP_META[k].id).value = '';
+  pastExpanded = false;
+  render();
+}
+
+// ── MODAL ──
+function openModal(id) {
+  const a = UPCOMING.find(x => x.id === id);
+  if (!a) return;
+  cancelTarget = id;
+  const overlay = document.getElementById('modal-overlay');
+  const warn = document.getElementById('modal-warn');
+  if (a.freeCancelExpired) {
+    document.getElementById('modal-icon').textContent = '⚠️';
+    document.getElementById('modal-title').textContent = 'Отмена с удержанием предоплаты';
+    document.getElementById('modal-body').textContent =
+      `Вы собираетесь отменить запись на «${a.service}» (${a.dateLabel}, ${a.pet}). До приёма менее 24 часов — бесплатная отмена недоступна.`;
+    warn.style.display = '';
+    warn.textContent = `Предоплата ${a.prepay} не будет возвращена согласно правилам клиники.`;
+    document.getElementById('modal-confirm-btn').textContent = 'Всё равно отменить';
+  } else {
+    document.getElementById('modal-icon').textContent = '🗓️';
+    document.getElementById('modal-title').textContent = 'Отменить запись?';
+    document.getElementById('modal-body').textContent =
+      `Вы собираетесь отменить запись на «${a.service}» (${a.dateLabel}, ${a.pet}). Бесплатная отмена доступна — предоплата ${a.prepay} будет возвращена в течение 3–5 рабочих дней.`;
+    warn.style.display = 'none';
+    document.getElementById('modal-confirm-btn').textContent = 'Отменить запись';
+  }
+  overlay.classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  cancelTarget = null;
+}
+function confirmCancel() {
+  if (cancelTarget) {
+    const idx = UPCOMING.findIndex(x => x.id === cancelTarget);
+    if (idx !== -1) UPCOMING.splice(idx, 1);
+  }
+  closeModalDirect();
+  render();
+}
+
+// ── LISTENERS ──
+['f-from','f-to','f-pet','f-clinic','f-doctor'].forEach(id =>
+  document.getElementById(id).addEventListener('change', () => { pastExpanded = false; render(); })
+);
+
+render();
+</script>
